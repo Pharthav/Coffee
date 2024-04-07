@@ -1,4 +1,4 @@
-\documentclass[a0paper,portrait]{baposter}
+\documentclass[a0paper,portrait, 3pt]{baposter}
 
 \usepackage{lipsum}          % This is just for some blindtext
 \usepackage{biblatex}
@@ -6,7 +6,8 @@
 \usepackage{url}			       % For \url
 \usepackage{epstopdf}	       % Included EPS files automatically converted to PDF to include with pdflatex
 \usepackage{multicol}        % Multi Columns
-
+\usepackage{graphicx}
+\usepackage{float}
 \usepackage{amsmath} % math
 \usepackage{amssymb}
 \usepackage{accents}
@@ -96,7 +97,7 @@
 %%% Abstract %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \headerbox{Abstract}{name=abstract,column=0,row=0,span=2}{
 %\begin{multicols}{2} 
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+We developed models for a cup of coffee utilising Newton's law of cooling and the heat equation to predict a timescale of cooling. The heat equation predicted that the coffee would cool down to 310 K in 52 minutes whereas the data suggests it should take 34 minutes. Finally, we investigated thermal convection within the coffee using the Lattice Boltzmann Method (LBM) to solve Navier-Stokes equations.
 
 %\end{multicols}
 }
@@ -111,16 +112,12 @@
 }
 
 \headerbox{Theory}{name=model_0,column=0,below=box1%,above=bottom
-}{Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+}{Newton's law of cooling was the primary inspiration for the results that follow. This assumes that convection is the dominant form of cooling due to the surrounding air. The empirical model assumes the coffee to be a lumped capacitance object. This was developed through the heat equation which treats the coffee as a grid. Finally, convection within the coffee was explored by solving the 2D Navier-Stokes equation with the aid of lattice Boltzmann techniques. 
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\headerbox{Empirical Model}{name=model_1,column=0,below=model_0%,above=bottom
+\headerbox{Data and Empirical Model}{name=model_1,column=0,below=model_0%,above=bottom
 }{Using a digital probe thermometer, we measured the temperature of a cup of hot coffee over time, as shown in Figure ?, at room temperature of 17°C. The starting temperature of the coffee ranged between 85 - 90°C.
 
 Using Newton's law of cooling,
@@ -132,23 +129,27 @@ Using Newton's law of cooling,
 \begin{equation}
     \frac{dQ_{cup}}{dt} = h_{air} A_{outer}(T_{surroundings} - T_{cup}) + h_{cup}A_{inner}(T_{coffee} - T_{cup})
 \end{equation}
-assuming the transfer coefficient from the cup to the air is the same as that from the coffee to the air. Here the values $h_{air}$ and $h_{cup}$ are left to be determined empirically. To solve these equations numerically, we performed a time-stepping procedure $\delta Q (t' + \delta t) = \frac{dQ}{dt} \Bigr|_{t = t'} \delta t$. We could then calculate the temperature change $\delta T$ Using the specific heat capacity $c$ of each material of mass $m$, we have $\delta T (t' + \delta t) = \delta Q(t' + \delta t')/cm$.
+assuming the transfer coefficient from the cup to the air is the same as that from the coffee to the air. Here the values $h_{air}$ and $h_{cup}$ are left to be determined empirically. The forward Euler method was applied to solve the equations. 
 
-The model was then fitted to the empirical data, as shown in Figure ?. This yielded the values of the heat transfer coefficients of $h_{air} \approx 27.8$ $ Wm^{-2}K^{-1}$, $h_{cup} \approx 26.3 $ $Wm^{-2}K^{-1}$. The lower heat transfer coefficient of the cup relative to the air demonstrates that it acts as insulation for the cooling coffee.
+The model was then fitted to the experimental data, as shown in Figure ?. This yielded the values of the heat transfer coefficients of $h_{air} \approx 27.8$ $ Wm^{-2}K^{-1}$, $h_{cup} \approx 26.3 $ $Wm^{-2}K^{-1}$.
 
 }
 
 
 %%% Box 2 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \headerbox{Theoretical Model}{name=model_2,column=1,below=abstract%,above=bottom
-}{
- We assumed that the dominant form of cooling was due to convection by the air and used the heat equation to describe the coffee itself. The convective cooling was incorporated into the system as boundary conditions, and we expected the sides and bottom of the cup to be more insulated than the open surface at the top. The form of the boundary condition was motivated using Newton’s law of cooling. To simplify calculations, we assumed the cup was a cuboid. The aim was to numerically solve the 3D heat equation, 
+}
+{
+
+ The convective cooling was incorporated into the system as boundary conditions. To simplify calculations, we assumed the cup was a cuboid.
+ 
+ We utilised the 3D heat equation as follows, 
 
 \begin{equation}
-    \frac{\partial^2 T }{\partial t^2} = \alpha \left( \frac{\partial^2 T }{\partial x^2} + \frac{\partial^2 T }{\partial y^2} + \frac{\partial^2 T }{\partial z^2} \right)
+    \frac{\partial T }{\partial t} = \alpha \left( \frac{\partial^2 T }{\partial x^2} + \frac{\partial^2 T }{\partial y^2} + \frac{\partial^2 T }{\partial z^2} \right)
 \end{equation}
 
-Using the following robin boundary conditions, 
+using the following robin boundary conditions, 
 
 \begin{equation}
     \frac{\partial T}{\partial z} \Bigr|_{z = 0} = - \frac{h_{cup}}{k_{water}} (T - T_{\infty})
@@ -160,31 +161,42 @@ Using the following robin boundary conditions,
 
 where $H$ is the height of the cup and $k_{water}$ is the thermal conductivity of water. The conditions in other coordinates were identical but all featured $h_{cup}$, as only the top of the cup is exposed to air. The empirical model values for $h_{cup}$ and $h_{air}$ were used.
 
-The solution method was an explicit FDM scheme which discretises the system. In 1D the scheme creates the following map,
+The solution method was an explicit FDM scheme which discretised the system. The forward Euler scheme was used to integrate the boundary conditions across the outer walls. \\
+The temperature against time plot was found by averaging the inner node contributions. However, this plot abstracts the temperature distribution which never fully became uniform in the simulation.
+% \includegraphics[width=\textwidth, scale=0.02]{Coffee-main/Coffee/Poster General Physics Project/temperature_plot__.png}
 
-\begin{equation}
-    T_i^{n+1} = T_i^n + \frac{\alpha \delta t}{(\delta x)^2} (T_{i-1}^{n} - 2 T_i^n + T^n_{i+1})
-\end{equation}
-
-Where the 3D generalisation is straightforward. The scheme is first order consistent. The forward Euler scheme was used to integrate the boundary conditions only across the outer walls of the 3D discretised system. The corners and edges of each face was ignored in the simulation as the scheme being used never updates those cells. \\
-The plot of temperature against time was found by averaging the temperature of only the inner nodes of the discretised system. The walls were ignored in the average as they introduced an unphysical drop in the temperature after the initial time step. However, this plot abstracts the temperature distribution which never fully became uniform in the simulation.
-
-
-%\includegraphics[width=\textwidth]{figure_1.jpg}
-
-} 
-
+% \begin{figure}[H]
+\begin{center}
+    \includegraphics[scale=0.32]{Coffee-main/Coffee/Poster General Physics Project/temperature_plot__.png}
+    
+    % \caption{My Figure}
+\end{center}
+% \caption{This is my caption.}
+% \end{figure}
+}
 \headerbox{Discussion}{name=conclusions,column=1,below=model_2}{  
-%\begin{figure}[t]
-%\includegraphics[width=0.5\textwidth]{figure_1.jpg}
-%\caption{This is my caption.}
-%\end{figure}
 
-The theoretical model predicts that the coffee cools slower compared to the experimental data. This was to be expected as the heat equation assumes that heat can only spread throughout the coffee due to diffusion. A real fluid would have convective mixing which would allow the heat to disperse much faster. Furthermore, the boundary condition ignores evaporative cooling. Evaporative cooling would likely cause the initial drop in temperature to be a lot faster, but its effect would diminish as the coffee cools down. These contributions form the basis of next steps to improve the accuracy of the model. It would also be informative to use higher order FDM schemes as a consistency check. 
+
+The theoretical model incorrectly predicts that the coffee cools over a longer time period. Ignoring both evaporative cooling and convective mixing within the coffee contributed to the result. Evaporative cooling would cool , but its effect would diminish as the coffee cools down. The convective mixing would accelerate the heat dispersion within the coffee and homogenise it within a realistic time scale. Finally, our results from the Navier-Stokes equations form the basis for incorporating convective mixing. In future work, we plan on extending the lattice boltzmann technique to 3D and incorporate convective boundary conditions.
+
+
 
 }
 
-\headerbox{References}{name=references,column=0,below=conclusions, span=2}{
+
+\headerbox{Lattice Boltzmann Method}
+{name=model_3,column=0,below=model_1}{ 
+\includegraphics[width=\textwidth]{Coffee-main/Coffee/Poster General Physics Project/Temperature.png}
+
+\begin{figure}[t]
+\includegraphics[width=0.5\textwidth]{Coffee-main/Coffee/Poster General Physics Project/Temperature.png}
+\caption{This is my caption.}
+\end{figure}
+
+}
+
+
+\headerbox{References}{name=references,column=0,below=model_3, span=2}{
 
 \renewcommand{\section}[2]{}
 \begin{thebibliography}{9}
@@ -199,3 +211,4 @@ Gossard, Nature (London) {\bf 410}, 183 (2001).
 
 \end{poster}
 \end{document}
+
